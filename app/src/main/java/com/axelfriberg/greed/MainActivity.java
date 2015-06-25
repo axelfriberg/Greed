@@ -7,10 +7,12 @@ import android.view.MenuItem;
 
 
 public class MainActivity extends ActionBarActivity {
+    private Greed greed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        greed = new Greed();
         setContentView(R.layout.activity_main);
     }
 

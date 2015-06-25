@@ -9,4 +9,6 @@
     <string name="score_button">Score</string>
     <string name="save_button">Save</string>
     <string name="throw_button">Throw</string>
+    <string name="congrats">Congratulations! You are victorious!</string>
+    <string name="finshed">You got %1$s points after %2$s turns.</string>
 </resources>

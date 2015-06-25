@@ -7,10 +7,15 @@ import android.view.MenuItem;
 
 
 public class WinningActivity extends ActionBarActivity {
+    private int mScore;
+    private int mTurnScore;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mScore = 0;
+        mTurnScore = 0;
         setContentView(R.layout.activity_winning);
     }
 
