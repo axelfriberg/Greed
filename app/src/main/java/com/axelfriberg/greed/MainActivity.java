@@ -16,12 +16,7 @@ public class MainActivity extends ActionBarActivity {
     private Button mSaveButton;
     private Button mScoreButton;
     private Button mThrowButton;
-    private ImageButton mDie0;
-    private ImageButton mDie1;
-    private ImageButton mDie2;
-    private ImageButton mDie3;
-    private ImageButton mDie4;
-    private ImageButton mDie5;
+    private ImageButton[] mDiceButtons;
     private boolean[] selected;
     private boolean[] throwDice;
     private static final String TAG = "MainActivity";
@@ -32,6 +27,7 @@ public class MainActivity extends ActionBarActivity {
         greed = new Greed();
         selected = new boolean[6];
         throwDice = new boolean[6];
+        mDiceButtons = new ImageButton[6];
         for(int i = 0; i < 6; i++){
             throwDice[i] = true;
         }
@@ -58,54 +54,62 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View v){
                 greed.newThrow(throwDice);
+                String s;
+                int resID;
+                for(int i = 0; i < 6; i++){
+                    s = "white"+greed.getDice()[i];
+                    resID = getResources().getIdentifier(s,"drawable",getPackageName());
+                    mDiceButtons[i].setImageResource(resID);
+                }
+
             }
         });
 
-        mDie0 = (ImageButton) findViewById(R.id.die0);
-        mDie0.setOnClickListener(new View.OnClickListener() {
+        mDiceButtons[0] = (ImageButton) findViewById(R.id.die0);
+        mDiceButtons[0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                select(0, mDie0);
+                select(0, mDiceButtons[0]);
             }
         });
 
-        mDie1 = (ImageButton) findViewById(R.id.die1);
-        mDie1.setOnClickListener(new View.OnClickListener() {
+        mDiceButtons[1] = (ImageButton) findViewById(R.id.die1);
+        mDiceButtons[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                select(1, mDie1);
+                select(1, mDiceButtons[1]);
             }
         });
 
-        mDie2 = (ImageButton) findViewById(R.id.die2);
-        mDie2.setOnClickListener(new View.OnClickListener() {
+        mDiceButtons[2] = (ImageButton) findViewById(R.id.die2);
+        mDiceButtons[2].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                select(2, mDie2);
+                select(2, mDiceButtons[2]);
             }
         });
 
-        mDie3 = (ImageButton) findViewById(R.id.die3);
-        mDie3.setOnClickListener(new View.OnClickListener() {
+        mDiceButtons[3] = (ImageButton) findViewById(R.id.die3);
+        mDiceButtons[3].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                select(3, mDie3);
+                select(3, mDiceButtons[3]);
             }
         });
 
-        mDie4 = (ImageButton) findViewById(R.id.die4);
-        mDie4.setOnClickListener(new View.OnClickListener() {
+        mDiceButtons[4] = (ImageButton) findViewById(R.id.die4);
+        mDiceButtons[4].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                select(4, mDie4);
+                select(4, mDiceButtons[4]);
             }
         });
 
-        mDie5 = (ImageButton) findViewById(R.id.die5);
-        mDie5.setOnClickListener(new View.OnClickListener() {
+        mDiceButtons[5] = (ImageButton) findViewById(R.id.die5);
+        mDiceButtons[5].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                select(5, mDie5);
+                select(5, mDiceButtons[5]);
             }
         });
     }
