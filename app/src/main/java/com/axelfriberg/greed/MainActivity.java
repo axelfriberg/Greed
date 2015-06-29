@@ -1,5 +1,6 @@
 package com.axelfriberg.greed;
 
+import android.media.Image;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,11 @@ public class MainActivity extends ActionBarActivity {
     private Button mScoreButton;
     private Button mThrowButton;
     private ImageButton mDie0;
+    private ImageButton mDie1;
+    private ImageButton mDie2;
+    private ImageButton mDie3;
+    private ImageButton mDie4;
+    private ImageButton mDie5;
     private boolean[] selected;
     private boolean[] throwDice;
     private static final String TAG = "MainActivity";
@@ -40,9 +46,9 @@ public class MainActivity extends ActionBarActivity {
         });
 
         mScoreButton = (Button) findViewById(R.id.score_button);
-        mScoreButton.setOnClickListener(new View.OnClickListener(){
+        mScoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v){
+            public void onClick(View v) {
                 greed.score();
             }
         });
@@ -59,24 +65,65 @@ public class MainActivity extends ActionBarActivity {
         mDie0.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String imageName = "red"+greed.getDice()[0];
-                Log.i(TAG,imageName);
-                int resID = getResources().getIdentifier(imageName,"drawable",getPackageName());
-                if (!selected[0]){
-                    mDie0.setImageResource(resID);
-                    selected[0] = true;
-                } else {
-                    mDie0.setImageResource(R.drawable.white1);
-                    selected[0] = false;
-                }
-
-
-
+                select(0, mDie0);
             }
         });
 
+        mDie1 = (ImageButton) findViewById(R.id.die1);
+        mDie1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                select(1, mDie1);
+            }
+        });
 
+        mDie2 = (ImageButton) findViewById(R.id.die2);
+        mDie2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                select(2, mDie2);
+            }
+        });
+
+        mDie3 = (ImageButton) findViewById(R.id.die3);
+        mDie3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                select(3, mDie3);
+            }
+        });
+
+        mDie4 = (ImageButton) findViewById(R.id.die4);
+        mDie4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                select(4, mDie4);
+            }
+        });
+
+        mDie5 = (ImageButton) findViewById(R.id.die5);
+        mDie5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                select(5, mDie5);
+            }
+        });
+    }
+
+    private void select(int index, ImageButton ib) {
+        String s;
+        int resID;
+        if (!selected[index]){
+            s = "red"+greed.getDice()[index];
+            resID = getResources().getIdentifier(s,"drawable",getPackageName());
+            ib.setImageResource(resID);
+            selected[index] = true;
+        } else {
+            s = "white"+greed.getDice()[index];
+            resID = getResources().getIdentifier(s,"drawable",getPackageName());
+            ib.setImageResource(resID);
+            selected[index] = false;
+        }
     }
 
     @Override
