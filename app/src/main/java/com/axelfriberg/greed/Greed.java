@@ -23,35 +23,34 @@ public class Greed {
         roundScore = 0;
         round = 1;
         for (int i = 0; i < 6; i++) {
-            dice[i] = randInterval(rand, max, min);
+            dice[i] = i+1;
         }
     }
 
-    public void newThrow(boolean d0, boolean d1, boolean d2, boolean d3, boolean d4, boolean d5){
-        if(d0){
+    public void newThrow(boolean[] d){
+        if(d[0]){
             dice[0] = randInterval(rand, max, min);
         }
 
-        if(d1){
+        if(d[1]){
             dice[1] = randInterval(rand, max, min);
         }
 
-        if(d2){
+        if(d[2]){
             dice[2] = randInterval(rand, max, min);
         }
 
-        if(d3){
+        if(d[3]){
             dice[3] = randInterval(rand, max, min);
         }
 
-        if(d4){
+        if(d[4]){
             dice[4] = randInterval(rand, max, min);
         }
 
-        if(d5){
+        if(d[5]){
             dice[5] = randInterval(rand, max, min);
         }
-
     }
 
     public void save(){
@@ -59,8 +58,16 @@ public class Greed {
         round++;
     }
 
+    public int score(){
+        return -1;
+    }
+
     public int getScore(){
         return score;
+    }
+
+    public int[] getDice(){
+        return dice;
     }
 
     public int getRoundScore(){
@@ -71,8 +78,6 @@ public class Greed {
          return r.nextInt(max - min + 1) + min;
     }
 
-    private int calculateScore(){
-        return 0;
-    }
+
 
 }

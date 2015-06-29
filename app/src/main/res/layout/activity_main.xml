@@ -16,45 +16,51 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <TextView android:id="@+id/round_textview"
+        android:layout_below="@id/turn_score_textview"
+        android:text="@string/round"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <TableLayout
         android:id="@+id/dice_layout"
-        android:layout_below="@id/turn_score_textview"
+        android:layout_below="@id/round_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:stretchColumns="1">
 
         <TableRow>
-            <ImageView
-                android:id="@+id/dice1"
+            <ImageButton
+                android:id="@+id/die0"
                 android:src="@drawable/white1">
-            </ImageView>
+            </ImageButton>
 
-            <ImageView
-                android:id="@+id/dice2"
+            <ImageButton
+                android:id="@+id/die1"
                 android:src="@drawable/white2">
-            </ImageView>
+            </ImageButton>
 
-            <ImageView
-                android:id="@+id/dice3"
+            <ImageButton
+                android:id="@+id/die2"
                 android:src="@drawable/white3">
-            </ImageView>
+            </ImageButton>
         </TableRow>
 
         <TableRow>
-            <ImageView
-                android:id="@+id/dice4"
+            <ImageButton
+                android:id="@+id/die3"
                 android:src="@drawable/white4">
-            </ImageView>
+            </ImageButton>
 
-            <ImageView
-                android:id="@+id/dice5"
+            <ImageButton
+                android:id="@+id/die4"
                 android:src="@drawable/white5">
-            </ImageView>
+            </ImageButton>
 
-            <ImageView
-                android:id="@+id/dice6"
+            <ImageButton
+                android:id="@+id/die5"
                 android:src="@drawable/white6">
-            </ImageView>
+            </ImageButton>
         </TableRow>
 
     </TableLayout>
