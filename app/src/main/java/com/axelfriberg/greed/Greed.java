@@ -1,5 +1,8 @@
 package com.axelfriberg.greed;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -7,12 +10,14 @@ import java.util.Random;
  */
 public class Greed {
     private int[] dice;
+    private boolean[] saved;
     private int max;
     private int min;
     private Random rand;
     private int score;
     private int roundScore;
     private int round;
+    private int toss;
 
     public Greed(){
         rand = new Random();
@@ -22,44 +27,68 @@ public class Greed {
         score = 0;
         roundScore = 0;
         round = 1;
+        toss = 0;
         for (int i = 0; i < 6; i++) {
             dice[i] = i+1;
         }
     }
 
-    public void newThrow(boolean[] d){
-        if(d[0]){
-            dice[0] = randInterval(rand, max, min);
+    public void newThrow(){
+        for (int i = 0; i < 6; i++) {
+            if(!saved[0]){
+                dice[i] = randInterval(rand, max, min);
+            }
         }
-
-        if(d[1]){
-            dice[1] = randInterval(rand, max, min);
-        }
-
-        if(d[2]){
-            dice[2] = randInterval(rand, max, min);
-        }
-
-        if(d[3]){
-            dice[3] = randInterval(rand, max, min);
-        }
-
-        if(d[4]){
-            dice[4] = randInterval(rand, max, min);
-        }
-
-        if(d[5]){
-            dice[5] = randInterval(rand, max, min);
-        }
+        toss++;
     }
 
-    public void save(){
+    public int score(boolean[] selected){
+        int score = 0;
+        ArrayList<Integer> choosen = new ArrayList<>();
+        ArrayList<Integer> tempList = new ArrayList<>();
+
+        for (int i = 0; i < 6; i++){
+            if(selected[i]){
+                choosen.add(dice[i]);
+            }
+        }
+
+        for (int i = 1; i < 7; i++) {
+            tempList.add(i);
+        }
+
+        //check for ladder
+        boolean ladder = choosen.containsAll(tempList);
+
+        if(ladder){
+            score = 1000;
+            roundScore += score;
+            return score;
+        }
+
+        for (int i = 1; i < 7; i++) {
+            tempList.clear();
+            for (int j = 0; j < 3; j++) {
+                tempList.add(i);
+            }
+
+            if(choosen.containsAll(tempList)){
+                score+= 100*i;
+            }
+        }
+
+        if(score == 0){
+            roundScore = 0;
+        }
+
+        roundScore += score;
+        return score;
+    }
+
+    public void newRound(){
         score += roundScore;
         round++;
-    }
-
-    public int score(){
-        return -1;
+        toss = 0;
     }
 
     public int getScore(){
@@ -72,6 +101,10 @@ public class Greed {
 
     public int getRoundScore(){
         return roundScore;
+    }
+
+    public int getRound(){
+        return round;
     }
 
     private int randInterval(Random r, int max, int min){

@@ -1,14 +1,14 @@
 package com.axelfriberg.greed;
 
-import android.media.Image;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -16,6 +16,8 @@ public class MainActivity extends ActionBarActivity {
     private Button mSaveButton;
     private Button mScoreButton;
     private Button mThrowButton;
+    private TextView mRoundTextView;
+    private TextView mRoundScoreTextView;
     private ImageButton[] mDiceButtons;
     private boolean[] selected;
     private boolean[] throwDice;
@@ -33,11 +35,14 @@ public class MainActivity extends ActionBarActivity {
         }
         setContentView(R.layout.activity_main);
 
+        mRoundTextView = (TextView) findViewById(R.id.round_textview);
+        mRoundScoreTextView = (TextView) findViewById(R.id.round_score_textview);
+
         mSaveButton = (Button)findViewById(R.id.save_button);
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                greed.save();
+                greed.newRound();
             }
         });
 
@@ -45,7 +50,15 @@ public class MainActivity extends ActionBarActivity {
         mScoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                greed.score();
+                int score = greed.score(selected);
+                if(score == 0){
+                    greed.newRound();
+                    mRoundTextView.setText("Round: "+greed.getRound());
+                    Toast.makeText(getApplicationContext(), "You did not get any points this throw and a new round has begun.", Toast.LENGTH_SHORT).show();
+                } else {
+                    mRoundScoreTextView.setText("Round score: " +greed.getRoundScore());
+                    Toast.makeText(getApplicationContext(), "You got "+score+" points.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -53,7 +66,7 @@ public class MainActivity extends ActionBarActivity {
         mThrowButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                greed.newThrow(throwDice);
+                greed.newThrow();
                 String s;
                 int resID;
                 for(int i = 0; i < 6; i++){
@@ -114,21 +127,7 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
-    private void select(int index, ImageButton ib) {
-        String s;
-        int resID;
-        if (!selected[index]){
-            s = "red"+greed.getDice()[index];
-            resID = getResources().getIdentifier(s,"drawable",getPackageName());
-            ib.setImageResource(resID);
-            selected[index] = true;
-        } else {
-            s = "white"+greed.getDice()[index];
-            resID = getResources().getIdentifier(s,"drawable",getPackageName());
-            ib.setImageResource(resID);
-            selected[index] = false;
-        }
-    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -150,5 +149,21 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void select(int index, ImageButton ib) {
+        String s;
+        int resID;
+        if (!selected[index]){
+            s = "red"+greed.getDice()[index];
+            resID = getResources().getIdentifier(s,"drawable",getPackageName());
+            ib.setImageResource(resID);
+            selected[index] = true;
+        } else {
+            s = "white"+greed.getDice()[index];
+            resID = getResources().getIdentifier(s,"drawable",getPackageName());
+            ib.setImageResource(resID);
+            selected[index] = false;
+        }
     }
 }
