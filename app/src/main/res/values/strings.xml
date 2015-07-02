@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Greed</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_winning">WinningActivity</string>
@@ -11,5 +10,5 @@
     <string name="save_button">Save</string>
     <string name="throw_button">Throw</string>
     <string name="congrats">Congratulations! You are victorious!</string>
-    <string name="finshed">You got %1$s points after %2$s turns.</string>
+    <string name="finished">You got %1$s points after %2$s turns.</string>
 </resources>

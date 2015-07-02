@@ -28,6 +28,7 @@ public class Greed {
         roundScore = 0;
         round = 1;
         toss = 0;
+        saved = new boolean[6];
         for (int i = 0; i < 6; i++) {
             dice[i] = i+1;
         }
@@ -35,7 +36,7 @@ public class Greed {
 
     public void newThrow(){
         for (int i = 0; i < 6; i++) {
-            if(!saved[0]){
+            if(!saved[i]){
                 dice[i] = randInterval(rand, max, min);
             }
         }
@@ -43,22 +44,24 @@ public class Greed {
     }
 
     public int score(boolean[] selected){
+        //saved = selected;
         int score = 0;
-        ArrayList<Integer> choosen = new ArrayList<>();
-        ArrayList<Integer> tempList = new ArrayList<>();
+        int[] chosenDice = new int[6];
 
         for (int i = 0; i < 6; i++){
             if(selected[i]){
-                choosen.add(dice[i]);
+                chosenDice[i] = dice[i];
             }
         }
 
-        for (int i = 1; i < 7; i++) {
-            tempList.add(i);
-        }
+        Arrays.sort(chosenDice);
 
-        //check for ladder
-        boolean ladder = choosen.containsAll(tempList);
+        boolean ladder = true;
+        for (int i = 0; i < 6; i++) {
+            if(chosenDice[i] != i){
+                ladder = false;
+            }
+        }
 
         if(ladder){
             score = 1000;
@@ -66,14 +69,34 @@ public class Greed {
             return score;
         }
 
-        for (int i = 1; i < 7; i++) {
-            tempList.clear();
-            for (int j = 0; j < 3; j++) {
-                tempList.add(i);
+        //tripplets
+        for (int i = 0; i < 6; i++) {
+            boolean tok = false;
+            for (int j = i; j < i+3; j++) {
+                if(chosenDice[j] == chosenDice[i]) {
+                    tok = true;
+                } else {
+                    tok = false;
+                }
+            }
+            if (tok && i == 1) {
+                score += 1000;
+            } else if (tok) {
+                score += 100 * i;
             }
 
-            if(choosen.containsAll(tempList)){
-                score+= 100*i;
+            if(tok){
+                for (int j = i; j < i+3; j++) {
+                    chosenDice[j] = 0;
+                }
+            }
+        }
+
+        for(int i = 0; i < chosenDice.length; i++){
+            if(chosenDice[i] == 1){
+                score += 100;
+            } else if(chosenDice[i] == 5){
+                score += 50;
             }
         }
 
@@ -103,13 +126,23 @@ public class Greed {
         return roundScore;
     }
 
+    public boolean[] getSaved(){
+        return saved;
+    }
+
     public int getRound(){
         return round;
+    }
+
+    public int getToss(){
+        return toss;
     }
 
     private int randInterval(Random r, int max, int min){
          return r.nextInt(max - min + 1) + min;
     }
+
+
 
 
 
