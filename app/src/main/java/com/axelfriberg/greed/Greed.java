@@ -48,11 +48,14 @@ public class Greed {
         int score = 0;
         int[] chosenDice = new int[6];
 
+
         for (int i = 0; i < 6; i++){
             if(selected[i]){
                 chosenDice[i] = dice[i];
             }
         }
+
+        int[] unSorted = chosenDice;
 
         Arrays.sort(chosenDice);
 
@@ -70,32 +73,47 @@ public class Greed {
         }
 
         //tripplets
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 4; i++) {
             boolean tok = false;
-            for (int j = i; j < i+3; j++) {
-                if(chosenDice[j] == chosenDice[i]) {
-                    tok = true;
+            int index1 = -1;
+            int index2 = -1;
+            for (int j = i+1; j < unSorted.length; j++) {
+                if(index2 == -1){
+                    if(unSorted[i+j] == unSorted[i]) {
+                        if(index1 == -1){
+                            index1 = i+j;
+                        } else {
+                            index2 = i+j;
+                        }
+                        tok = true;
+                    } else {
+                        tok = false;
+                    }
                 } else {
-                    tok = false;
+                    j = unSorted.length;
                 }
             }
-            if (tok && i == 1) {
+
+            if (tok && chosenDice[i] == 1) {
                 score += 1000;
             } else if (tok) {
-                score += 100 * i;
+                score += 100 * chosenDice[i];
             }
 
             if(tok){
-                for (int j = i; j < i+3; j++) {
-                    chosenDice[j] = 0;
-                }
+                chosenDice[i] = 0;
+                chosenDice[index1] = 0;
+                chosenDice[index2] = 0;
             }
         }
+
 
         for(int i = 0; i < chosenDice.length; i++){
             if(chosenDice[i] == 1){
                 score += 100;
+                chosenDice[i] = 0;
             } else if(chosenDice[i] == 5){
+                chosenDice[i] = 0;
                 score += 50;
             }
         }

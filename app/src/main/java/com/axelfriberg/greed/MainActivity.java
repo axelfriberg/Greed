@@ -210,6 +210,7 @@ public class MainActivity extends ActionBarActivity {
         scorePressed = true;
         String s;
         int resID;
+        mRoundScoreTextView.setText("Round score: 0");
         for (int i = 0; i < 6; i++) {
             mDiceButtons[i].setEnabled(true);
             s = "white" + greed.getDice()[i];
