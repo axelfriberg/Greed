@@ -2,6 +2,7 @@ package com.axelfriberg.greed;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +24,7 @@ public class MainActivity extends ActionBarActivity {
     private boolean[] selected;
     private boolean[] throwDice;
     private static final String TAG = "MainActivity";
+    private static final int LIMIT = 100;
     private boolean scorePressed;
     private boolean thrown;
 
@@ -47,7 +49,7 @@ public class MainActivity extends ActionBarActivity {
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                newRound(greed);
+                newRound();
                 mScoreTextView.setText("Score: "+greed.getScore());
             }
         });
@@ -59,28 +61,35 @@ public class MainActivity extends ActionBarActivity {
                 if(thrown) {
                     scorePressed = true;
                     int score = greed.score(selected);
-                    if(score < 300 && greed.getToss() == 1){
-                        newRound(greed);
+                    if(score < LIMIT && greed.getToss() == 1){
+                        newRound();
                         mRoundTextView.setText("Round: " + greed.getRound());
-                        Toast.makeText(getApplicationContext(), "You got less than 300 points on your first throw and a new round has begun", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "You got less than "+LIMIT+" points on your first throw and a new round has begun", Toast.LENGTH_SHORT).show();
                     }else if (score == 0) {
-                        newRound(greed);
+                        newRound();
                         mRoundTextView.setText("Round: " + greed.getRound());
                         Toast.makeText(getApplicationContext(), "You did not get any points this throw and a new round has begun", Toast.LENGTH_SHORT).show();
                     } else {
                         mRoundScoreTextView.setText("Round score: " + greed.getRoundScore());
-                        Toast.makeText(getApplicationContext(), "You got " + score + " points.", Toast.LENGTH_SHORT).show();
+
                         boolean[] saved = greed.getSaved();
-                        for (int i = 0; i < 6; i++) {
-                            if (saved[i]) {
-                                String s;
-                                int resID;
-                                s = "red" + greed.getDice()[i];
-                                resID = getResources().getIdentifier(s, "drawable", getPackageName());
-                                mDiceButtons[i].setImageResource(resID);
-                                mDiceButtons[i].setEnabled(false);
+                        if(!allSaved(saved)){
+                            for (int i = 0; i < 6; i++) {
+                                if (saved[i]) {
+                                    String s;
+                                    int resID;
+                                    s = "grey" + greed.getDice()[i];
+                                    resID = getResources().getIdentifier(s, "drawable", getPackageName());
+                                    mDiceButtons[i].setImageResource(resID);
+                                    mDiceButtons[i].setEnabled(false);
+                                    Toast.makeText(getApplicationContext(), "You got " + score + " points.", Toast.LENGTH_SHORT).show();
+                                }
                             }
+                        } else {
+                            greed.allSaved();
+                            Toast.makeText(getApplicationContext(), "You got " + score + " points, and get to throw all the dice again.", Toast.LENGTH_SHORT).show();
                         }
+
                     }
                     thrown = false;
                 } else {
@@ -104,13 +113,9 @@ public class MainActivity extends ActionBarActivity {
                             s = "white" + greed.getDice()[i];
                             resID = getResources().getIdentifier(s, "drawable", getPackageName());
                             mDiceButtons[i].setImageResource(resID);
-                        } else {
-                            s = "grey" + greed.getDice()[i];
-                            resID = getResources().getIdentifier(s, "drawable", getPackageName());
-                            mDiceButtons[i].setImageResource(resID);
                         }
                     }
-                    scorePressed = false;
+                    thrown = true;
                 } else {
                     Toast.makeText(getApplicationContext(), "You need to press score first", Toast.LENGTH_SHORT).show();
                 }
@@ -206,8 +211,9 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    private void newRound(Greed g){
+    private void newRound(){
         scorePressed = true;
+        thrown = false;
         String s;
         int resID;
         mRoundScoreTextView.setText("Round score: 0");
@@ -216,8 +222,27 @@ public class MainActivity extends ActionBarActivity {
             s = "white" + greed.getDice()[i];
             resID = getResources().getIdentifier(s, "drawable", getPackageName());
             mDiceButtons[i].setImageResource(resID);
+            selected[i] = false;
         }
 
         greed.newRound();
+    }
+
+    private boolean allSaved(boolean[] s){
+        for(boolean b : s){
+            if(!b){
+                return false;
+            }
+        }
+        String str;
+        int resID;
+        for (int i = 0; i < 6; i++) {
+            str = "white"+greed.getDice()[i];
+            resID = getResources().getIdentifier(str,"drawable",getPackageName());
+            mDiceButtons[i].setImageResource(resID);
+            mDiceButtons[i].setEnabled(true);
+            selected[i] = false;
+        }
+        return true;
     }
 }

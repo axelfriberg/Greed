@@ -1,8 +1,6 @@
 package com.axelfriberg.greed;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -18,6 +16,7 @@ public class Greed {
     private int roundScore;
     private int round;
     private int toss;
+    private static final String TAG = "GreedTAG";
 
     public Greed(){
         rand = new Random();
@@ -44,24 +43,23 @@ public class Greed {
     }
 
     public int score(boolean[] selected){
-        //saved = selected;
         int score = 0;
         int[] chosenDice = new int[6];
 
 
         for (int i = 0; i < 6; i++){
-            if(selected[i]){
+            if(selected[i] && !saved[i]){
                 chosenDice[i] = dice[i];
             }
         }
 
-        int[] unSorted = chosenDice;
-
-        Arrays.sort(chosenDice);
+        int[] sorted = new int[6];
+        System.arraycopy(chosenDice,0,sorted,0,chosenDice.length);
+        Arrays.sort(sorted);
 
         boolean ladder = true;
         for (int i = 0; i < 6; i++) {
-            if(chosenDice[i] != i){
+            if(sorted[i] != i){
                 ladder = false;
             }
         }
@@ -77,20 +75,21 @@ public class Greed {
             boolean tok = false;
             int index1 = -1;
             int index2 = -1;
-            for (int j = i+1; j < unSorted.length; j++) {
+            for (int j = i+1; j < chosenDice.length; j++) {
                 if(index2 == -1){
-                    if(unSorted[i+j] == unSorted[i]) {
+                    if(chosenDice[j] == chosenDice[i] && chosenDice[j] != 0) {
                         if(index1 == -1){
-                            index1 = i+j;
+                            index1 = j;
+
                         } else {
-                            index2 = i+j;
+                            index2 = j;
                         }
                         tok = true;
                     } else {
                         tok = false;
                     }
                 } else {
-                    j = unSorted.length;
+                    break;
                 }
             }
 
@@ -99,11 +98,13 @@ public class Greed {
             } else if (tok) {
                 score += 100 * chosenDice[i];
             }
-
             if(tok){
                 chosenDice[i] = 0;
+                saved[i] = true;
                 chosenDice[index1] = 0;
+                saved[index1] = true;
                 chosenDice[index2] = 0;
+                saved[index2] = true;
             }
         }
 
@@ -112,9 +113,12 @@ public class Greed {
             if(chosenDice[i] == 1){
                 score += 100;
                 chosenDice[i] = 0;
+                saved[i] = true;
+
             } else if(chosenDice[i] == 5){
                 chosenDice[i] = 0;
                 score += 50;
+                saved[i] = true;
             }
         }
 
@@ -130,6 +134,7 @@ public class Greed {
         score += roundScore;
         round++;
         toss = 0;
+        Arrays.fill(saved,false);
     }
 
     public int getScore(){
@@ -158,6 +163,10 @@ public class Greed {
 
     private int randInterval(Random r, int max, int min){
          return r.nextInt(max - min + 1) + min;
+    }
+
+    public void allSaved(){
+        Arrays.fill(saved,false);
     }
 
 
