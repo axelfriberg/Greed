@@ -12,18 +12,20 @@ public class Greed {
     private int max;
     private int min;
     private Random rand;
-    private int score;
+    private int totalScore;
     private int roundScore;
     private int round;
     private int toss;
     private static final String TAG = "GreedTAG";
+    public static final int WIN_LIMIT= 10000;
+    public static final int FIRST_THROW_LIMIT = 300;
 
     public Greed(){
         rand = new Random();
         max = 6;
         min = 1;
         dice = new int[6];
-        score = 0;
+        totalScore = 0;
         roundScore = 0;
         round = 1;
         toss = 0;
@@ -43,6 +45,7 @@ public class Greed {
     }
 
     public int score(boolean[] selected){
+
         int score = 0;
         int[] chosenDice = new int[6];
 
@@ -59,18 +62,18 @@ public class Greed {
 
         boolean ladder = true;
         for (int i = 0; i < 6; i++) {
-            if(sorted[i] != i){
+            if(sorted[i] != i+1){
                 ladder = false;
             }
         }
 
         if(ladder){
+            Arrays.fill(saved, true);
             score = 1000;
             roundScore += score;
             return score;
         }
 
-        //tripplets
         for (int i = 0; i < 4; i++) {
             boolean tok = false;
             int index1 = -1;
@@ -84,11 +87,9 @@ public class Greed {
                         } else {
                             index2 = j;
                         }
-                        tok = true;
-                    } else {
-                        tok = false;
                     }
                 } else {
+                    tok = true;
                     break;
                 }
             }
@@ -127,18 +128,22 @@ public class Greed {
         }
 
         roundScore += score;
+        if(roundScore+totalScore >=WIN_LIMIT){
+            totalScore += roundScore;
+        }
         return score;
     }
 
     public void newRound(){
-        score += roundScore;
+        totalScore += roundScore;
         round++;
         toss = 0;
+        roundScore = 0;
         Arrays.fill(saved,false);
     }
 
-    public int getScore(){
-        return score;
+    public int getTotalScore(){
+        return totalScore;
     }
 
     public int[] getDice(){
@@ -168,9 +173,4 @@ public class Greed {
     public void allSaved(){
         Arrays.fill(saved,false);
     }
-
-
-
-
-
 }
