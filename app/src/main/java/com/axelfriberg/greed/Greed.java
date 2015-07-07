@@ -18,7 +18,7 @@ public class Greed {
     private int toss;
     private static final String TAG = "GreedTAG";
     public static final int WIN_LIMIT= 10000;
-    public static final int FIRST_THROW_LIMIT = 300;
+    public static final int FIRST_THROW_LIMIT = 200;
 
     public Greed(){
         rand = new Random();
@@ -83,14 +83,12 @@ public class Greed {
                     if(chosenDice[j] == chosenDice[i] && chosenDice[j] != 0) {
                         if(index1 == -1){
                             index1 = j;
-
                         } else {
                             index2 = j;
+                            tok = true;
+                            break;
                         }
                     }
-                } else {
-                    tok = true;
-                    break;
                 }
             }
 
@@ -109,7 +107,6 @@ public class Greed {
             }
         }
 
-
         for(int i = 0; i < chosenDice.length; i++){
             if(chosenDice[i] == 1){
                 score += 100;
@@ -123,11 +120,12 @@ public class Greed {
             }
         }
 
-        if(score == 0){
+        if(score == 0 || (score < FIRST_THROW_LIMIT && toss == 1)){
             roundScore = 0;
+        } else {
+            roundScore += score;
         }
 
-        roundScore += score;
         if(roundScore+totalScore >=WIN_LIMIT){
             totalScore += roundScore;
         }

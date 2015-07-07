@@ -3,6 +3,7 @@ package com.axelfriberg.greed;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,8 +24,7 @@ public class MainActivity extends ActionBarActivity {
     private ImageButton[] mDiceButtons;
     private boolean[] selected;
     private boolean[] throwDice;
-    private static final String TAG = "MainActivity";
-
+    private static final String TAG = "MainActivity#420";
     private boolean scorePressed;
     private boolean thrown;
     public final static String EXTRA_MESSAGE = "com.axelfriberg.greed.WINNING";
@@ -53,6 +53,7 @@ public class MainActivity extends ActionBarActivity {
                 if(scorePressed) {
                     newRound();
                     mScoreTextView.setText("Score: " + greed.getTotalScore());
+
                 } else {
                     Toast.makeText(getApplicationContext(), "You need to press score before you can save", Toast.LENGTH_SHORT).show();
                 }
@@ -78,7 +79,6 @@ public class MainActivity extends ActionBarActivity {
                         win();
                     }else {
                         mRoundScoreTextView.setText("Round score: " + greed.getRoundScore());
-
                         boolean[] saved = greed.getSaved();
                         if (!allSaved(saved)) {
                             for (int i = 0; i < 6; i++) {
@@ -116,6 +116,7 @@ public class MainActivity extends ActionBarActivity {
                     int resID;
                     boolean[] saved = greed.getSaved();
                     for (int i = 0; i < 6; i++) {
+                        selected[i] = false;
                         if (!saved[i]) {
                             s = "white" + greed.getDice()[i];
                             resID = getResources().getIdentifier(s, "drawable", getPackageName());
@@ -176,8 +177,6 @@ public class MainActivity extends ActionBarActivity {
             }
         });
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -24,8 +24,6 @@ public class WinningActivity extends ActionBarActivity {
         String message = intent.getStringExtra(MainActivity.EXTRA_MESSAGE);
         mWinTextView = (TextView) findViewById(R.id.finished_score_TextView);
         mWinTextView.setText(message);
-
-
     }
 
     @Override
