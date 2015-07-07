@@ -11,4 +11,5 @@
     <string name="throw_button">Throw</string>
     <string name="congrats">Congratulations! You are victorious!</string>
     <string name="finished">You got 0 points after 0 turns.</string>
+    <string name="winning_title">You have won!</string>
 </resources>

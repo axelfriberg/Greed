@@ -16,7 +16,6 @@ public class Greed {
     private int roundScore;
     private int round;
     private int toss;
-    private static final String TAG = "GreedTAG";
     public static final int WIN_LIMIT= 10000;
     public static final int FIRST_THROW_LIMIT = 200;
 
@@ -35,6 +34,10 @@ public class Greed {
         }
     }
 
+    /**
+     * Used to simulate a new throw by the user.
+     * Each die that has not been previously used for points will be thrown.
+     */
     public void newThrow(){
         for (int i = 0; i < 6; i++) {
             if(!saved[i]){
@@ -44,11 +47,16 @@ public class Greed {
         toss++;
     }
 
-    public int score(boolean[] selected){
+    /**
+     * Calculates the score for a given set of dice, selected by the player.
+     * It checks for a ladder, triplets and dice one and five.
+     * @param selected Which of the six dice that should be used for calculation of the score for this throw.
+     * @return
+     */
 
+    public int score(boolean[] selected){
         int score = 0;
         int[] chosenDice = new int[6];
-
 
         for (int i = 0; i < 6; i++){
             if(selected[i] && !saved[i]){
@@ -56,6 +64,7 @@ public class Greed {
             }
         }
 
+        //Check if the player has gotten a ladder
         int[] sorted = new int[6];
         System.arraycopy(chosenDice,0,sorted,0,chosenDice.length);
         Arrays.sort(sorted);
@@ -74,30 +83,31 @@ public class Greed {
             return score;
         }
 
+        //Check if the player has gotten three of a kind
         for (int i = 0; i < 4; i++) {
             boolean tok = false;
             int index1 = -1;
             int index2 = -1;
             for (int j = i+1; j < chosenDice.length; j++) {
-                if(index2 == -1){
-                    if(chosenDice[j] == chosenDice[i] && chosenDice[j] != 0) {
-                        if(index1 == -1){
-                            index1 = j;
-                        } else {
-                            index2 = j;
-                            tok = true;
-                            break;
-                        }
+                if(chosenDice[j] == chosenDice[i] && chosenDice[j] != 0) {
+                    if(index1 == -1){
+                        index1 = j;
+                    } else {
+                        index2 = j;
+                        tok = true;
+                        break;
                     }
                 }
             }
 
-            if (tok && chosenDice[i] == 1) {
-                score += 1000;
-            } else if (tok) {
-                score += 100 * chosenDice[i];
-            }
             if(tok){
+                if (chosenDice[i] == 1) {
+                    score += 1000;
+                } else{
+                    score += 100 * chosenDice[i];
+                }
+
+                //Set to 0 so the dice are not used twice
                 chosenDice[i] = 0;
                 saved[i] = true;
                 chosenDice[index1] = 0;
@@ -107,12 +117,12 @@ public class Greed {
             }
         }
 
+        //Check if the player has gotten singles of dice one and/or five.
         for(int i = 0; i < chosenDice.length; i++){
             if(chosenDice[i] == 1){
                 score += 100;
                 chosenDice[i] = 0;
                 saved[i] = true;
-
             } else if(chosenDice[i] == 5){
                 chosenDice[i] = 0;
                 score += 50;
@@ -132,6 +142,9 @@ public class Greed {
         return score;
     }
 
+    /**
+     * Sets up a new round for the player.
+     */
     public void newRound(){
         totalScore += roundScore;
         round++;
@@ -140,35 +153,62 @@ public class Greed {
         Arrays.fill(saved,false);
     }
 
+    /**
+     * Returns the total score the player currently has.
+     * @return
+     */
     public int getTotalScore(){
         return totalScore;
     }
 
+    /**
+     * Returns an array of what values the dice currently has.
+     * @return
+     */
     public int[] getDice(){
         return dice;
     }
 
+    /**
+     * Returns the score the player has accumulated this round.
+     * @return
+     */
     public int getRoundScore(){
         return roundScore;
     }
 
+    /**
+     * Returns which dice are currently saved and has been used for points for a throw.
+     * @return
+     */
     public boolean[] getSaved(){
         return saved;
     }
 
+    /**
+     * Returns which round the game is at.
+     * @return
+     */
     public int getRound(){
         return round;
     }
 
+    /**
+     * Returns which throw the player is at for a given round.
+     * @return
+     */
     public int getToss(){
         return toss;
     }
 
-    private int randInterval(Random r, int max, int min){
-         return r.nextInt(max - min + 1) + min;
-    }
-
+    /**
+     * Used when all dice have been saved and need to be unsaved.
+     */
     public void allSaved(){
         Arrays.fill(saved,false);
+    }
+
+    private int randInterval(Random r, int max, int min){
+         return r.nextInt(max - min + 1) + min;
     }
 }

@@ -1,11 +1,11 @@
 package com.axelfriberg.greed;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -24,7 +24,6 @@ public class MainActivity extends ActionBarActivity {
     private ImageButton[] mDiceButtons;
     private boolean[] selected;
     private boolean[] throwDice;
-    private static final String TAG = "MainActivity#420";
     private boolean scorePressed;
     private boolean thrown;
     public final static String EXTRA_MESSAGE = "com.axelfriberg.greed.WINNING";
@@ -53,7 +52,7 @@ public class MainActivity extends ActionBarActivity {
                 if(scorePressed) {
                     newRound();
                     mScoreTextView.setText("Score: " + greed.getTotalScore());
-
+                    mRoundTextView.setText("Round: "+greed.getRound());
                 } else {
                     Toast.makeText(getApplicationContext(), "You need to press score before you can save", Toast.LENGTH_SHORT).show();
                 }
@@ -179,28 +178,26 @@ public class MainActivity extends ActionBarActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setMessage("Are you sure you want to exit?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        finish();
+                    }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    private void win() {
+        Intent intent = new Intent(this, WinningActivity.class);
+        String message = "You got "+greed.getTotalScore()+" points after "+greed.getRound()+" turns. Press back to start a new game.";
+        intent.putExtra(EXTRA_MESSAGE, message);
+        startActivity(intent);
+        finish();
     }
-
-
 
     private void select(int index, ImageButton ib) {
         String s;
@@ -250,13 +247,5 @@ public class MainActivity extends ActionBarActivity {
             selected[i] = false;
         }
         return true;
-    }
-
-    public void win() {
-            Intent intent = new Intent(this, WinningActivity.class);
-            String message = "You got "+greed.getTotalScore()+" points after "+greed.getRound()+" turns.";
-            intent.putExtra(EXTRA_MESSAGE, message);
-            startActivity(intent);
-            finish();
     }
 }
