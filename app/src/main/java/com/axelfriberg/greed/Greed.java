@@ -4,7 +4,9 @@ import java.util.Arrays;
 import java.util.Random;
 
 /**
- * Created by Axel on 2015-06-25.
+ * Simulates a game of Greed.
+ *
+ * Created by Axel Friberg on 2015-07-07.
  */
 public class Greed {
     private int[] dice;
@@ -16,7 +18,7 @@ public class Greed {
     private int roundScore;
     private int round;
     private int toss;
-    public static final int WIN_LIMIT= 10000;
+    public static final int WIN_LIMIT= 5000;
     public static final int FIRST_THROW_LIMIT = 200;
 
     public Greed(){
@@ -51,7 +53,7 @@ public class Greed {
      * Calculates the score for a given set of dice, selected by the player.
      * It checks for a ladder, triplets and dice one and five.
      * @param selected Which of the six dice that should be used for calculation of the score for this throw.
-     * @return
+     * @return The score accumulated this throw.
      */
 
     public int score(boolean[] selected){
@@ -155,7 +157,7 @@ public class Greed {
 
     /**
      * Returns the total score the player currently has.
-     * @return
+     * @return The total score.
      */
     public int getTotalScore(){
         return totalScore;
@@ -163,7 +165,7 @@ public class Greed {
 
     /**
      * Returns an array of what values the dice currently has.
-     * @return
+     * @return The values of the dice.
      */
     public int[] getDice(){
         return dice;
@@ -171,7 +173,7 @@ public class Greed {
 
     /**
      * Returns the score the player has accumulated this round.
-     * @return
+     * @return The accumulated score this round.
      */
     public int getRoundScore(){
         return roundScore;
@@ -179,7 +181,7 @@ public class Greed {
 
     /**
      * Returns which dice are currently saved and has been used for points for a throw.
-     * @return
+     * @return Which dice are currently saved.
      */
     public boolean[] getSaved(){
         return saved;
@@ -187,7 +189,7 @@ public class Greed {
 
     /**
      * Returns which round the game is at.
-     * @return
+     * @return The current round.
      */
     public int getRound(){
         return round;
@@ -195,7 +197,7 @@ public class Greed {
 
     /**
      * Returns which throw the player is at for a given round.
-     * @return
+     * @return The current throw.
      */
     public int getToss(){
         return toss;

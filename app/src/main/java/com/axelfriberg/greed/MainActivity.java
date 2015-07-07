@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -31,11 +30,13 @@ public class MainActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         greed = new Greed();
         selected = new boolean[6];
         throwDice = new boolean[6];
         mDiceButtons = new ImageButton[6];
         scorePressed = true;
+
         for(int i = 0; i < 6; i++){
             throwDice[i] = true;
         }
@@ -82,11 +83,7 @@ public class MainActivity extends ActionBarActivity {
                         if (!allSaved(saved)) {
                             for (int i = 0; i < 6; i++) {
                                 if (saved[i]) {
-                                    String s;
-                                    int resID;
-                                    s = "grey" + greed.getDice()[i];
-                                    resID = getResources().getIdentifier(s, "drawable", getPackageName());
-                                    mDiceButtons[i].setImageResource(resID);
+                                    setDiceImage("grey" + greed.getDice()[i], mDiceButtons[i]);
                                     mDiceButtons[i].setEnabled(false);
                                     Toast.makeText(getApplicationContext(), "You got " + score + " points.", Toast.LENGTH_SHORT).show();
                                 }
@@ -111,15 +108,11 @@ public class MainActivity extends ActionBarActivity {
                     greed.newThrow();
                     thrown = true;
                     scorePressed = false;
-                    String s;
-                    int resID;
                     boolean[] saved = greed.getSaved();
                     for (int i = 0; i < 6; i++) {
                         selected[i] = false;
                         if (!saved[i]) {
-                            s = "white" + greed.getDice()[i];
-                            resID = getResources().getIdentifier(s, "drawable", getPackageName());
-                            mDiceButtons[i].setImageResource(resID);
+                            setDiceImage("white" + greed.getDice()[i],mDiceButtons[i]);
                         }
                     }
                 } else {
@@ -200,17 +193,11 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void select(int index, ImageButton ib) {
-        String s;
-        int resID;
         if (!selected[index]){
-            s = "red"+greed.getDice()[index];
-            resID = getResources().getIdentifier(s,"drawable",getPackageName());
-            ib.setImageResource(resID);
+            setDiceImage("red"+greed.getDice()[index],ib);
             selected[index] = true;
         } else {
-            s = "white"+greed.getDice()[index];
-            resID = getResources().getIdentifier(s,"drawable",getPackageName());
-            ib.setImageResource(resID);
+            setDiceImage("white"+greed.getDice()[index],ib);
             selected[index] = false;
         }
     }
@@ -218,15 +205,11 @@ public class MainActivity extends ActionBarActivity {
     private void newRound(){
         scorePressed = true;
         thrown = false;
-        String s;
-        int resID;
         mRoundScoreTextView.setText("Round score: 0");
         for (int i = 0; i < 6; i++) {
             selected[i] = false;
             mDiceButtons[i].setEnabled(true);
-            s = "white" + greed.getDice()[i];
-            resID = getResources().getIdentifier(s, "drawable", getPackageName());
-            mDiceButtons[i].setImageResource(resID);
+            setDiceImage("white" + greed.getDice()[i], mDiceButtons[i]);
         }
         greed.newRound();
     }
@@ -237,15 +220,17 @@ public class MainActivity extends ActionBarActivity {
                 return false;
             }
         }
-        String str;
-        int resID;
+
         for (int i = 0; i < 6; i++) {
-            str = "white"+greed.getDice()[i];
-            resID = getResources().getIdentifier(str,"drawable",getPackageName());
-            mDiceButtons[i].setImageResource(resID);
+            setDiceImage("white"+greed.getDice()[i], mDiceButtons[i]);
             mDiceButtons[i].setEnabled(true);
             selected[i] = false;
         }
         return true;
+    }
+
+    private void setDiceImage(String s, ImageButton button){
+        int resID = getResources().getIdentifier(s,"drawable",getPackageName());
+        button.setImageResource(resID);
     }
 }
