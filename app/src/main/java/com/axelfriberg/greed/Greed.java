@@ -174,6 +174,15 @@ public class Greed implements Parcelable {
     }
 
     /**
+     * Returns the value of a specific die.
+     * @param i Index of the dice that you want to get
+     * @return The value of the die.
+     */
+    public int getDice(int i){
+        return dice[i];
+    }
+
+    /**
      * Returns the score the player has accumulated this round.
      * @return The accumulated score this round.
      */

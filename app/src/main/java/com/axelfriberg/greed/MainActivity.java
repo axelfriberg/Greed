@@ -178,6 +178,19 @@ public class MainActivity extends AppCompatActivity {
         mRoundScoreTextView.setText(savedInstanceState.getString(STATE_ROUNDSCORE_TEXT));
         // Restore the state of the selected array
         selected = savedInstanceState.getBooleanArray(STATE_SELECTED_ARRAY);
+
+        boolean[] saved = greed.getSaved();
+        for (int i = 0; i < 6; i++) {
+            int diceVal = greed.getDice(i);
+            if(saved[i]){
+                setDiceImage("grey"+diceVal,mDiceButtons[i]);
+                mDiceButtons[i].setEnabled(false);
+            } else if(selected[i]){
+                setDiceImage("red"+diceVal,mDiceButtons[i]);
+            } else {
+                setDiceImage("white"+diceVal,mDiceButtons[i]);
+            }
+        }
     }
 
     private void win() {
