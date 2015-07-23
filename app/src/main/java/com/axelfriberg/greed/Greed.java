@@ -178,7 +178,7 @@ public class Greed implements Parcelable {
      * @param i Index of the dice that you want to get
      * @return The value of the die.
      */
-    public int getDice(int i){
+    public int getDie(int i){
         return dice[i];
     }
 
@@ -221,6 +221,7 @@ public class Greed implements Parcelable {
         Arrays.fill(saved,false);
     }
 
+    // Returns a random value in the interval
     private int randInterval(Random r, int max, int min){
         return r.nextInt(max - min + 1) + min;
     }

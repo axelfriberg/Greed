@@ -3,7 +3,6 @@ package com.axelfriberg.greed;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +10,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,10 +29,8 @@ public class MainActivity extends AppCompatActivity {
     static final String STATE_THROW_BUTTON ="throwButton";
     static final String STATE_SCORE_TEXT ="currentScore";
     static final String STATE_ROUND_TEXT ="currentRound";
-    static final String STATE_ROUNDSCORE_TEXT ="currentRoundScore";
+    static final String STATE_ROUND_SCORE_TEXT ="currentRoundScore";
     static final String STATE_SELECTED_ARRAY ="selectedArray";
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                    //Start a new round and update the GUI
                     newRound();
                     mScoreTextView.setText("Score: " + greed.getTotalScore());
                     mRoundTextView.setText("Round: "+greed.getRound());
@@ -64,17 +61,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int score = greed.score(selected);
-                if(score < Greed.FIRST_THROW_LIMIT && greed.getToss() == 1){
+                if(score < Greed.FIRST_THROW_LIMIT && greed.getToss() == 1){ //Check if the first throw limit is crossed
                     newRound();
                     mRoundTextView.setText("Round: " + greed.getRound());
-                    Toast.makeText(getApplicationContext(), "You got less than "+Greed.FIRST_THROW_LIMIT+" points on your first throw and a new round has begun", Toast.LENGTH_SHORT).show();
-                }else if (score == 0) {
+                }else if (score == 0) { //Start new round if the no points are recived on a throw
                     newRound();
                     mRoundTextView.setText("Round: " + greed.getRound());
-                    Toast.makeText(getApplicationContext(), "You did not get any points this throw and a new round has begun", Toast.LENGTH_SHORT).show();
-                } else if(greed.getTotalScore() >= Greed.WIN_LIMIT) {
+                } else if(greed.getTotalScore() >= Greed.WIN_LIMIT) { //Check if the player has won
                     win();
                 }else {
+                    //Updates the GUI to reflect what dice has been saved. Check if all have been saved.
                     mRoundScoreTextView.setText("Round score: " + greed.getRoundScore());
                     boolean[] saved = greed.getSaved();
                     if (!allSaved(saved)) {
@@ -82,12 +78,10 @@ public class MainActivity extends AppCompatActivity {
                             if (saved[i]) {
                                 setDiceImage("grey" + greed.getDice()[i], mDiceButtons[i]);
                                 mDiceButtons[i].setEnabled(false);
-                                Toast.makeText(getApplicationContext(), "You got " + score + " points.", Toast.LENGTH_SHORT).show();
                             }
                         }
                     } else {
                         greed.allSaved();
-                        Toast.makeText(getApplicationContext(), "You got " + score + " points, and get to throw all the dice again.", Toast.LENGTH_SHORT).show();
                     }
                     mThrowButton.setEnabled(true);
                     mScoreButton.setEnabled(false);
@@ -100,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         mThrowButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
+                //Throw the dice and update the GUI to reflect the changes.
                 greed.newThrow();
                 boolean[] saved = greed.getSaved();
                 for (int i = 0; i < 6; i++) {
@@ -114,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        //Create all the dice image buttons.
         for (int i = 0; i < 6; i++) {
             String name = "die";
             name += i;
@@ -128,10 +124,12 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
+        //Initial state of the buttons
         mSaveButton.setEnabled(false);
         mScoreButton.setEnabled(false);
     }
 
+    //Make sure the user wants to exit the app
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
@@ -151,13 +149,13 @@ public class MainActivity extends AppCompatActivity {
         //save the state of the game
         savedInstanceState.putParcelable(STATE_GREED, greed);
         //save the state of the buttons
-        savedInstanceState.putBoolean(STATE_SAVE_BUTTON,mSaveButton.isEnabled());
-        savedInstanceState.putBoolean(STATE_SCORE_BUTTON,mScoreButton.isEnabled());
+        savedInstanceState.putBoolean(STATE_SAVE_BUTTON, mSaveButton.isEnabled());
+        savedInstanceState.putBoolean(STATE_SCORE_BUTTON, mScoreButton.isEnabled());
         savedInstanceState.putBoolean(STATE_THROW_BUTTON, mThrowButton.isEnabled());
         //save the state of the text views
         savedInstanceState.putString(STATE_SCORE_TEXT, mScoreTextView.getText().toString());
         savedInstanceState.putString(STATE_ROUND_TEXT, mRoundTextView.getText().toString());
-        savedInstanceState.putString(STATE_ROUNDSCORE_TEXT, mRoundScoreTextView.getText().toString());
+        savedInstanceState.putString(STATE_ROUND_SCORE_TEXT, mRoundScoreTextView.getText().toString());
         //save which of the die buttons are selected
         savedInstanceState.putBooleanArray(STATE_SELECTED_ARRAY,selected);
         super.onSaveInstanceState(savedInstanceState);
@@ -175,13 +173,14 @@ public class MainActivity extends AppCompatActivity {
         // Restore the state of the text views
         mScoreTextView.setText(savedInstanceState.getString(STATE_SCORE_TEXT));
         mRoundTextView.setText(savedInstanceState.getString(STATE_ROUND_TEXT));
-        mRoundScoreTextView.setText(savedInstanceState.getString(STATE_ROUNDSCORE_TEXT));
+        mRoundScoreTextView.setText(savedInstanceState.getString(STATE_ROUND_SCORE_TEXT));
         // Restore the state of the selected array
         selected = savedInstanceState.getBooleanArray(STATE_SELECTED_ARRAY);
 
+        // Restore the correct state and images of the dice buttons.
         boolean[] saved = greed.getSaved();
         for (int i = 0; i < 6; i++) {
-            int diceVal = greed.getDice(i);
+            int diceVal = greed.getDie(i);
             if(saved[i]){
                 setDiceImage("grey"+diceVal,mDiceButtons[i]);
                 mDiceButtons[i].setEnabled(false);
@@ -193,6 +192,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Used when the player wins the game. Starts the new activity.
     private void win() {
         Intent intent = new Intent(this, WinningActivity.class);
         String message = "You got "+greed.getTotalScore()+" points after "+greed.getRound()+" turns. Press back to start a new game.";
@@ -201,6 +201,7 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    //Used to update the GUI to reflect that a die has been selected.
     private void select(int index, ImageButton ib) {
         if (!selected[index]){
             setDiceImage("red"+greed.getDice()[index],ib);
@@ -211,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Starts a new round and updates the GUI to the default state.
     private void newRound(){
         mRoundScoreTextView.setText("Round score: 0");
         for (int i = 0; i < 6; i++) {
@@ -224,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
         mThrowButton.setEnabled(true);
     }
 
+    //Return true if all of the booleans in the array are true. Updates the GUI if that is the case.
     private boolean allSaved(boolean[] s){
         for(boolean b : s){
             if(!b){
@@ -238,6 +241,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    //Updates a single dice button image to a certain image
     private void setDiceImage(String s, ImageButton button){
         int resID = getResources().getIdentifier(s,"drawable",getPackageName());
         button.setImageResource(resID);
