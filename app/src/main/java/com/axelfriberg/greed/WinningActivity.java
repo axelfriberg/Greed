@@ -38,9 +38,9 @@ public class WinningActivity extends AppCompatActivity {
     @Override
     public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        // Restore state members from saved instance
+        // Restore the text
         String winText = savedInstanceState.getString(STATE_WIN_TEXT);
-        // Update the screen with the retrieved values
+        // Update the screen
         mWinTextView.setText(winText);
     }
 }
