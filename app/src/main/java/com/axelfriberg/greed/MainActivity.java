@@ -3,8 +3,9 @@ package com.axelfriberg.greed;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -12,7 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
     private Greed greed;
     private Button mSaveButton;
     private Button mScoreButton;
@@ -23,8 +24,6 @@ public class MainActivity extends ActionBarActivity {
     private ImageButton[] mDiceButtons;
     private boolean[] selected;
     private boolean[] throwDice;
-    private boolean scorePressed;
-    private boolean thrown;
     public final static String EXTRA_MESSAGE = "com.axelfriberg.greed.WINNING";
 
     @Override
@@ -35,7 +34,6 @@ public class MainActivity extends ActionBarActivity {
         selected = new boolean[6];
         throwDice = new boolean[6];
         mDiceButtons = new ImageButton[6];
-        scorePressed = true;
 
         for(int i = 0; i < 6; i++){
             throwDice[i] = true;
@@ -50,13 +48,9 @@ public class MainActivity extends ActionBarActivity {
         mSaveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(scorePressed) {
                     newRound();
                     mScoreTextView.setText("Score: " + greed.getTotalScore());
                     mRoundTextView.setText("Round: "+greed.getRound());
-                } else {
-                    Toast.makeText(getApplicationContext(), "You need to press score before you can save", Toast.LENGTH_SHORT).show();
-                }
             }
         });
 
@@ -64,38 +58,35 @@ public class MainActivity extends ActionBarActivity {
         mScoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(thrown) {
-                    scorePressed = true;
-                    int score = greed.score(selected);
-                    if(score < Greed.FIRST_THROW_LIMIT && greed.getToss() == 1){
-                        newRound();
-                        mRoundTextView.setText("Round: " + greed.getRound());
-                        Toast.makeText(getApplicationContext(), "You got less than "+Greed.FIRST_THROW_LIMIT+" points on your first throw and a new round has begun", Toast.LENGTH_SHORT).show();
-                    }else if (score == 0) {
-                        newRound();
-                        mRoundTextView.setText("Round: " + greed.getRound());
-                        Toast.makeText(getApplicationContext(), "You did not get any points this throw and a new round has begun", Toast.LENGTH_SHORT).show();
-                    } else if(greed.getTotalScore() >= Greed.WIN_LIMIT) {
-                        win();
-                    }else {
-                        mRoundScoreTextView.setText("Round score: " + greed.getRoundScore());
-                        boolean[] saved = greed.getSaved();
-                        if (!allSaved(saved)) {
-                            for (int i = 0; i < 6; i++) {
-                                if (saved[i]) {
-                                    setDiceImage("grey" + greed.getDice()[i], mDiceButtons[i]);
-                                    mDiceButtons[i].setEnabled(false);
-                                    Toast.makeText(getApplicationContext(), "You got " + score + " points.", Toast.LENGTH_SHORT).show();
-                                }
+                int score = greed.score(selected);
+                if(score < Greed.FIRST_THROW_LIMIT && greed.getToss() == 1){
+                    newRound();
+                    mRoundTextView.setText("Round: " + greed.getRound());
+                    Toast.makeText(getApplicationContext(), "You got less than "+Greed.FIRST_THROW_LIMIT+" points on your first throw and a new round has begun", Toast.LENGTH_SHORT).show();
+                }else if (score == 0) {
+                    newRound();
+                    mRoundTextView.setText("Round: " + greed.getRound());
+                    Toast.makeText(getApplicationContext(), "You did not get any points this throw and a new round has begun", Toast.LENGTH_SHORT).show();
+                } else if(greed.getTotalScore() >= Greed.WIN_LIMIT) {
+                    win();
+                }else {
+                    mRoundScoreTextView.setText("Round score: " + greed.getRoundScore());
+                    boolean[] saved = greed.getSaved();
+                    if (!allSaved(saved)) {
+                        for (int i = 0; i < 6; i++) {
+                            if (saved[i]) {
+                                setDiceImage("grey" + greed.getDice()[i], mDiceButtons[i]);
+                                mDiceButtons[i].setEnabled(false);
+                                Toast.makeText(getApplicationContext(), "You got " + score + " points.", Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            greed.allSaved();
-                            Toast.makeText(getApplicationContext(), "You got " + score + " points, and get to throw all the dice again.", Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        greed.allSaved();
+                        Toast.makeText(getApplicationContext(), "You got " + score + " points, and get to throw all the dice again.", Toast.LENGTH_SHORT).show();
                     }
-                    thrown = false;
-                } else {
-                    Toast.makeText(getApplicationContext(), "You need to throw the dice first", Toast.LENGTH_SHORT).show();
+                    mThrowButton.setEnabled(true);
+                    mScoreButton.setEnabled(false);
+                    mSaveButton.setEnabled(true);
                 }
             }
         });
@@ -104,70 +95,36 @@ public class MainActivity extends ActionBarActivity {
         mThrowButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v){
-                if(scorePressed) {
-                    greed.newThrow();
-                    thrown = true;
-                    scorePressed = false;
-                    boolean[] saved = greed.getSaved();
-                    for (int i = 0; i < 6; i++) {
-                        selected[i] = false;
-                        if (!saved[i]) {
-                            setDiceImage("white" + greed.getDice()[i],mDiceButtons[i]);
-                        }
+                greed.newThrow();
+                boolean[] saved = greed.getSaved();
+                for (int i = 0; i < 6; i++) {
+                    selected[i] = false;
+                    if (!saved[i]) {
+                        setDiceImage("white" + greed.getDice()[i],mDiceButtons[i]);
                     }
-                } else {
-                    Toast.makeText(getApplicationContext(), "You need to press score first", Toast.LENGTH_SHORT).show();
                 }
+                mThrowButton.setEnabled(false);
+                mScoreButton.setEnabled(true);
+                mSaveButton.setEnabled(false);
             }
         });
 
-        mDiceButtons[0] = (ImageButton) findViewById(R.id.die0);
-        mDiceButtons[0].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                select(0, mDiceButtons[0]);
-            }
-        });
+        for (int i = 0; i < 6; i++) {
+            String name = "die";
+            name += i;
+            int idNum = getResources().getIdentifier(name,"id",getPackageName());
+            mDiceButtons[i] = (ImageButton) findViewById(idNum);
+            final int finalI = i;
+            mDiceButtons[i].setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    select(finalI, mDiceButtons[finalI]);
+                }
+            });
+        }
 
-        mDiceButtons[1] = (ImageButton) findViewById(R.id.die1);
-        mDiceButtons[1].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                select(1, mDiceButtons[1]);
-            }
-        });
-
-        mDiceButtons[2] = (ImageButton) findViewById(R.id.die2);
-        mDiceButtons[2].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                select(2, mDiceButtons[2]);
-            }
-        });
-
-        mDiceButtons[3] = (ImageButton) findViewById(R.id.die3);
-        mDiceButtons[3].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                select(3, mDiceButtons[3]);
-            }
-        });
-
-        mDiceButtons[4] = (ImageButton) findViewById(R.id.die4);
-        mDiceButtons[4].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                select(4, mDiceButtons[4]);
-            }
-        });
-
-        mDiceButtons[5] = (ImageButton) findViewById(R.id.die5);
-        mDiceButtons[5].setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                select(5, mDiceButtons[5]);
-            }
-        });
+        mSaveButton.setEnabled(false);
+        mScoreButton.setEnabled(false);
     }
 
     @Override
@@ -203,8 +160,6 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void newRound(){
-        scorePressed = true;
-        thrown = false;
         mRoundScoreTextView.setText("Round score: 0");
         for (int i = 0; i < 6; i++) {
             selected[i] = false;
@@ -212,6 +167,9 @@ public class MainActivity extends ActionBarActivity {
             setDiceImage("white" + greed.getDice()[i], mDiceButtons[i]);
         }
         greed.newRound();
+        mSaveButton.setEnabled(false);
+        mScoreButton.setEnabled(false);
+        mThrowButton.setEnabled(true);
     }
 
     private boolean allSaved(boolean[] s){
@@ -220,7 +178,6 @@ public class MainActivity extends ActionBarActivity {
                 return false;
             }
         }
-
         for (int i = 0; i < 6; i++) {
             setDiceImage("white"+greed.getDice()[i], mDiceButtons[i]);
             mDiceButtons[i].setEnabled(true);
