@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -23,8 +24,17 @@ public class MainActivity extends AppCompatActivity {
     private TextView mRoundScoreTextView;
     private ImageButton[] mDiceButtons;
     private boolean[] selected;
-    private boolean[] throwDice;
     public final static String EXTRA_MESSAGE = "com.axelfriberg.greed.WINNING";
+    static final String STATE_GREED = "greed";
+    static final String STATE_SAVE_BUTTON ="saveButton";
+    static final String STATE_SCORE_BUTTON ="scoreButton";
+    static final String STATE_THROW_BUTTON ="throwButton";
+    static final String STATE_SCORE_TEXT ="currentScore";
+    static final String STATE_ROUND_TEXT ="currentRound";
+    static final String STATE_ROUNDSCORE_TEXT ="currentRoundScore";
+    static final String STATE_SELECTED_ARRAY ="selectedArray";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
         greed = new Greed();
         selected = new boolean[6];
-        throwDice = new boolean[6];
         mDiceButtons = new ImageButton[6];
-
-        for(int i = 0; i < 6; i++){
-            throwDice[i] = true;
-        }
 
         setContentView(R.layout.activity_main);
         mScoreTextView = (TextView) findViewById(R.id.score_TextView);
@@ -139,6 +144,40 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("No", null)
                 .show();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        //save the state of the game
+        savedInstanceState.putParcelable(STATE_GREED, greed);
+        //save the state of the buttons
+        savedInstanceState.putBoolean(STATE_SAVE_BUTTON,mSaveButton.isEnabled());
+        savedInstanceState.putBoolean(STATE_SCORE_BUTTON,mScoreButton.isEnabled());
+        savedInstanceState.putBoolean(STATE_THROW_BUTTON, mThrowButton.isEnabled());
+        //save the state of the text views
+        savedInstanceState.putString(STATE_SCORE_TEXT, mScoreTextView.getText().toString());
+        savedInstanceState.putString(STATE_ROUND_TEXT, mRoundTextView.getText().toString());
+        savedInstanceState.putString(STATE_ROUNDSCORE_TEXT, mRoundScoreTextView.getText().toString());
+        //save which of the die buttons are selected
+        savedInstanceState.putBooleanArray(STATE_SELECTED_ARRAY,selected);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        // Restore the state of the game
+        greed = savedInstanceState.getParcelable(STATE_GREED);
+        // Restore state of the buttons
+        mSaveButton.setEnabled(savedInstanceState.getBoolean(STATE_SAVE_BUTTON));
+        mScoreButton.setEnabled(savedInstanceState.getBoolean(STATE_SCORE_BUTTON));
+        mThrowButton.setEnabled(savedInstanceState.getBoolean(STATE_THROW_BUTTON));
+        // Restore the state of the text views
+        mScoreTextView.setText(savedInstanceState.getString(STATE_SCORE_TEXT));
+        mRoundTextView.setText(savedInstanceState.getString(STATE_ROUND_TEXT));
+        mRoundScoreTextView.setText(savedInstanceState.getString(STATE_ROUNDSCORE_TEXT));
+        // Restore the state of the selected array
+        selected = savedInstanceState.getBooleanArray(STATE_SELECTED_ARRAY);
     }
 
     private void win() {

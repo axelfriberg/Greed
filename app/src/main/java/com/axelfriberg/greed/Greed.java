@@ -1,5 +1,7 @@
 package com.axelfriberg.greed;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -8,7 +10,7 @@ import java.util.Random;
  *
  * Created by Axel Friberg on 2015-07-07.
  */
-public class Greed {
+public class Greed implements Parcelable {
     private int[] dice;
     private boolean[] saved;
     private int max;
@@ -211,6 +213,49 @@ public class Greed {
     }
 
     private int randInterval(Random r, int max, int min){
-         return r.nextInt(max - min + 1) + min;
+        return r.nextInt(max - min + 1) + min;
     }
+
+    protected Greed(Parcel in) {
+        max = in.readInt();
+        min = in.readInt();
+        rand = (Random) in.readValue(Random.class.getClassLoader());
+        totalScore = in.readInt();
+        roundScore = in.readInt();
+        round = in.readInt();
+        toss = in.readInt();
+        dice = in.createIntArray();
+        saved = in.createBooleanArray();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(max);
+        dest.writeInt(min);
+        dest.writeValue(rand);
+        dest.writeInt(totalScore);
+        dest.writeInt(roundScore);
+        dest.writeInt(round);
+        dest.writeInt(toss);
+        dest.writeIntArray(dice);
+        dest.writeBooleanArray(saved);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Greed> CREATOR = new Parcelable.Creator<Greed>() {
+        @Override
+        public Greed createFromParcel(Parcel in) {
+            return new Greed(in);
+        }
+
+        @Override
+        public Greed[] newArray(int size) {
+            return new Greed[size];
+        }
+    };
 }
