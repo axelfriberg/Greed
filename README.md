@@ -1,7 +1,7 @@
 # Greed
 The app simulates the dice game Greed, played by one person, for Android.
 
-The first project of the course "Utveckling av mobila applikationer", given at.
+The first project of the course "Utveckling av mobila applikationer".
 
 ## Rules
 
