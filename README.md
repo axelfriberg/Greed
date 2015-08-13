@@ -1,7 +1,7 @@
 # Greed
-The first project of the course "Utveckling av mobila applikationer".
+The app simulates the dice game Greed, played by one person, for Android.
 
-The app simulates a game of Greed, played by one person.
+The first project of the course "Utveckling av mobila applikationer", given at.
 
 ## Rules
 
